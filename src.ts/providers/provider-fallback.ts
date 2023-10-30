@@ -309,6 +309,11 @@ function getAnyResult(quorum: number, results: Array<TallyResult>): undefined | 
     const result = checkQuorum(quorum, results);
     if (result !== undefined) { return result; }
 
+    // Otherwise, do we have any non-error result?
+    for (const r of results) {
+        if (r.value && !r.value.error) { return r.value; }
+    }
+
     // Otherwise, do we have any result?
     for (const r of results) {
         if (r.value) { return r.value; }
@@ -342,7 +347,7 @@ function getFuzzyMode(quorum: number, results: Array<TallyResult>): undefined | 
     }
 
     let bestWeight = 0;
-    let bestResult = undefined;
+    let bestResult: number | undefined = undefined;
 
     for (const { weight, result } of tally.values()) {
         // Use this result, if this result meets quorum and has either:
