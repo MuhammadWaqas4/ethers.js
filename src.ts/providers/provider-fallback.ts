@@ -305,11 +305,7 @@ function getMedian(quorum: number, results: Array<TallyResult>): undefined | big
 }
 
 function getAnyResult(quorum: number, results: Array<TallyResult>): undefined | any | Error {
-    // If any value or error meets quorum, that is our preferred result
-    const result = checkQuorum(quorum, results);
-    if (result !== undefined) { return result; }
-
-    // Otherwise, do we have any non-error result?
+    // Do we have any non-error result?
     for (const r of results) {
         if (r.value && !r.value.error) { return r.value; }
     }
