@@ -9,7 +9,7 @@ const __$G = (typeof globalThis !== 'undefined' ? globalThis: typeof window !== 
     /**
      *  The current version of Ethers.
      */
-    const version = "6.7.6";
+    const version = "6.7.9";
 
     /**
      *  Property helper functions.
@@ -20747,12 +20747,7 @@ const __$G = (typeof globalThis !== 'undefined' ? globalThis: typeof window !== 
         return (values[mid - 1] + values[mid] + BN_1) / BN_2;
     }
     function getAnyResult(quorum, results) {
-        // If any value or error meets quorum, that is our preferred result
-        const result = checkQuorum(quorum, results);
-        if (result !== undefined) {
-            return result;
-        }
-        // Otherwise, do we have any non-error result?
+        // Do we have any non-error result?
         for (const r of results) {
             if (r.value && !r.value.error) {
                 return r.value;
