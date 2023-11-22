@@ -3,7 +3,7 @@ const __$G = (typeof globalThis !== 'undefined' ? globalThis: typeof window !== 
 /**
  *  The current version of Ethers.
  */
-const version = "6.7.9";
+const version = "6.7.10";
 
 /**
  *  Property helper functions.
@@ -20740,10 +20740,10 @@ function getMedian(quorum, results) {
     // Even length; take the ceiling of the mean of the center two values
     return (values[mid - 1] + values[mid] + BN_1) / BN_2;
 }
-function getAnyResult(quorum, results) {
+function getAnyResult(results) {
     // Do we have any non-error result?
     for (const r of results) {
-        if (r.value && !r.value.error) {
+        if (r.value && !(r.value instanceof Error)) {
             return r.value;
         }
     }
@@ -21070,7 +21070,7 @@ class FallbackProvider extends AbstractProvider {
                 // Pending blocks are in the mempool and already
                 // quite untrustworthy; just grab anything
                 if ("blockTag" in req && req.blockTag === "pending") {
-                    return getAnyResult(this.quorum, results);
+                    return getAnyResult(results);
                 }
                 return checkQuorum(this.quorum, results);
             case "call":
@@ -21084,7 +21084,7 @@ class FallbackProvider extends AbstractProvider {
             case "getLogs":
                 return checkQuorum(this.quorum, results);
             case "broadcastTransaction":
-                return getAnyResult(this.quorum, results);
+                return getAnyResult(results);
         }
         assert$1(false, "unsupported method", "UNSUPPORTED_OPERATION", {
             operation: `_perform(${stringify(req.method)})`
@@ -21161,7 +21161,7 @@ class FallbackProvider extends AbstractProvider {
                     return Object.assign(normalizeResult({ error }), { weight });
                 }
             }));
-            const result = getAnyResult(this.quorum, results);
+            const result = getAnyResult(results);
             assert$1(result !== undefined, "problem multi-broadcasting", "SERVER_ERROR", {
                 request: "%sub-requests",
                 info: { request: req, results: results.map(stringify) }

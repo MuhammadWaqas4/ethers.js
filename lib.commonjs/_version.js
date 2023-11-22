@@ -5,5 +5,5 @@ exports.version = void 0;
 /**
  *  The current version of Ethers.
  */
-exports.version = "6.7.9";
+exports.version = "6.7.10";
 //# sourceMappingURL=_version.js.map

@@ -159,10 +159,10 @@ function getMedian(quorum, results) {
     // Even length; take the ceiling of the mean of the center two values
     return (values[mid - 1] + values[mid] + BN_1) / BN_2;
 }
-function getAnyResult(quorum, results) {
+function getAnyResult(results) {
     // Do we have any non-error result?
     for (const r of results) {
-        if (r.value && !r.value.error) {
+        if (r.value && !(r.value instanceof Error)) {
             return r.value;
         }
     }
@@ -489,7 +489,7 @@ export class FallbackProvider extends AbstractProvider {
                 // Pending blocks are in the mempool and already
                 // quite untrustworthy; just grab anything
                 if ("blockTag" in req && req.blockTag === "pending") {
-                    return getAnyResult(this.quorum, results);
+                    return getAnyResult(results);
                 }
                 return checkQuorum(this.quorum, results);
             case "call":
@@ -503,7 +503,7 @@ export class FallbackProvider extends AbstractProvider {
             case "getLogs":
                 return checkQuorum(this.quorum, results);
             case "broadcastTransaction":
-                return getAnyResult(this.quorum, results);
+                return getAnyResult(results);
         }
         assert(false, "unsupported method", "UNSUPPORTED_OPERATION", {
             operation: `_perform(${stringify(req.method)})`
@@ -580,7 +580,7 @@ export class FallbackProvider extends AbstractProvider {
                     return Object.assign(normalizeResult({ error }), { weight });
                 }
             }));
-            const result = getAnyResult(this.quorum, results);
+            const result = getAnyResult(results);
             assert(result !== undefined, "problem multi-broadcasting", "SERVER_ERROR", {
                 request: "%sub-requests",
                 info: { request: req, results: results.map(stringify) }
